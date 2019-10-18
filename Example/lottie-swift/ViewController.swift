@@ -16,48 +16,68 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    let animation = Animation.named("LottieLogo1", subdirectory: "TestAnimations")
+    if let animation = Animation.named("servishero_loading", subdirectory: "TestAnimations") {
+        
+        animationView.animation = animation
+        
+//        if let animationView = LOTAnimationView(contentsOf: URL(string: "https://github.com/airbnb/lottie-ios/raw/master/Example/Assets/LottieLogo1.json")!) {
+        animationView.frame = CGRect(x: 0, y: 0, width: 400, height: 400)
+        animationView.center = self.view.center
+        
+        animationView.loopMode = .loop
+        animationView.contentMode = .scaleAspectFill
+        animationView.animationSpeed = 0.5
+        
+        // Applying UIView animation
+        let minimizeTransform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        animationView.transform = minimizeTransform
+        UIView.animate(withDuration: 3.0, delay: 0.0, options: [.repeat, .autoreverse], animations: {self.animationView.transform = CGAffineTransform.identity}, completion: nil)
+        
+        view.addSubview(animationView)
     
-    animationView.animation = animation
-    animationView.contentMode = .scaleAspectFit
-    view.addSubview(animationView)
-  
-    slider.translatesAutoresizingMaskIntoConstraints = false
-    view.translatesAutoresizingMaskIntoConstraints = false
-    slider.minimumValue = 0
-    slider.maximumValue = 1
-    slider.value = 0
-    view.addSubview(slider)
-    animationView.backgroundBehavior = .pauseAndRestore
-    animationView.translatesAutoresizingMaskIntoConstraints = false
-    animationView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor).isActive = true
-    animationView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        animationView.play()
+        
+    } else if let animation = Animation.named("HamburgerArrow", subdirectory: "TestAnimations") {
     
-    animationView.bottomAnchor.constraint(equalTo: slider.topAnchor, constant: -12).isActive = true
-    animationView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-    animationView.setContentCompressionResistancePriority(.fittingSizeLevel, for: .horizontal)
-    
-    /// *** Keypath Setting
-    
-    let redValueProvider = ColorValueProvider(Color(r: 1, g: 0.2, b: 0.3, a: 1))
-    animationView.setValueProvider(redValueProvider, keypath: AnimationKeypath(keypath: "Switch Outline Outlines.**.Fill 1.Color"))
-    animationView.setValueProvider(redValueProvider, keypath: AnimationKeypath(keypath: "Checkmark Outlines 2.**.Stroke 1.Color"))
-    
-    /// Slider
-    slider.heightAnchor.constraint(equalToConstant: 40).isActive = true
-    slider.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
-    slider.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor).isActive = true
-    slider.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -12).isActive = true
-    slider.addTarget(self, action: #selector(updateAnimation(sender:)), for: .valueChanged)
-    slider.addTarget(self, action: #selector(sliderFinished), for: .touchUpInside)
-    
-    /// Play Animation
-    
-    /// Create a display link to make slider track with animation progress.
-    displayLink = CADisplayLink(target: self, selector: #selector(animationCallback))
-    displayLink?.add(to: .current,
-                    forMode: RunLoop.Mode.default)
-    
+        animationView.animation = animation
+        animationView.contentMode = .scaleAspectFit
+        view.addSubview(animationView)
+      
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        slider.minimumValue = 0
+        slider.maximumValue = 1
+        slider.value = 0
+        view.addSubview(slider)
+        animationView.backgroundBehavior = .pauseAndRestore
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor).isActive = true
+        animationView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        
+        animationView.bottomAnchor.constraint(equalTo: slider.topAnchor, constant: -12).isActive = true
+        animationView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        animationView.setContentCompressionResistancePriority(.fittingSizeLevel, for: .horizontal)
+        
+        /// *** Keypath Setting
+        
+        let redValueProvider = ColorValueProvider(Color(r: 1, g: 0.2, b: 0.3, a: 1))
+        animationView.setValueProvider(redValueProvider, keypath: AnimationKeypath(keypath: "Switch Outline Outlines.**.Fill 1.Color"))
+        animationView.setValueProvider(redValueProvider, keypath: AnimationKeypath(keypath: "Checkmark Outlines 2.**.Stroke 1.Color"))
+        
+        /// Slider
+        slider.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        slider.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
+        slider.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor).isActive = true
+        slider.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -12).isActive = true
+        slider.addTarget(self, action: #selector(updateAnimation(sender:)), for: .valueChanged)
+        slider.addTarget(self, action: #selector(sliderFinished), for: .touchUpInside)
+        
+        /// Play Animation
+        
+        /// Create a display link to make slider track with animation progress.
+        displayLink = CADisplayLink(target: self, selector: #selector(animationCallback))
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+    }
     
     /// Animated Switch
     
@@ -148,7 +168,7 @@ class ViewController: UIViewController {
     super.viewDidAppear(animated)
     animationView.play(fromProgress: 0,
                        toProgress: 1,
-                       loopMode: LottieLoopMode.playOnce,
+                       loopMode: LottieLoopMode.loop,
                        completion: { (finished) in
                         if finished {
                           print("Animation Complete")
